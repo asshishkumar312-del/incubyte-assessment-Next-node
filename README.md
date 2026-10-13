@@ -28,6 +28,7 @@ A full-stack, production-quality web application designed for ACME Corp's **HR M
 - **10,000 Seeded Employees:** Transactional batch seed script runs in `< 2.5 seconds`.
 - **Append-Only Salary Audit Ledger:** Every salary update records effective date, reason, and actor without mutating historical data.
 - **Sub-10ms Analytics Engine:** Multi-currency normalization (USD, GBP, EUR, INR, JPY, etc.), departmental payroll budgets, pay distribution, and gender equity.
+- **TanStack Query (React Query v5):** All server state lives in a typed `src/hooks/useAnalytics.ts` layer — no `useEffect` in pages, automatic caching (2 min staleTime), deduplication, and one-call `refetch()`.
 - **High-Performance UI:** Next.js 16 (React 19, TypeScript), server-side pagination, debounced search, faceted filters, and responsive Recharts visualizations.
 - **Production Test Coverage:** 46 passing tests across backend and frontend test suites.
 
@@ -54,13 +55,40 @@ incubyte/
 │   └── server.js              # Server entry point
 │
 └── frontend/                  # Next.js 16 (App Router, React 19, TS, Tailwind v4)
-    ├── src/
-    │   ├── app/               # Routes: /login, /dashboard, /employees, /analytics
-    │   ├── components/        # EmployeeTable, Navigation, Modals, Charts
-    │   ├── contexts/          # AuthContext with session persistence
-    │   └── lib/               # Typed API client, utility formatters
-    └── src/**/*.test.tsx      # Jest + React Testing Library component tests (15 tests)
+    └── src/
+        ├── app/               # Routes: /login, /dashboard, /employees, /analytics
+        │   └── layout.tsx     # Root layout — wraps app in AuthProvider + QueryProvider
+        ├── components/        # EmployeeTable, Navigation, Modals, Charts
+        │   └── QueryProvider.tsx  # Client-side TanStack Query context boundary
+        ├── contexts/          # AuthContext with session persistence
+        ├── hooks/             # ── SERVER-STATE HOOKS (React Query) ──────────────
+        │   └── useAnalytics.ts    # useDashboard(), useFullAnalytics(), useTopEarners()…
+        └── lib/               # Typed API client, utility formatters, query client config
+            ├── api.ts             # Raw typed fetch wrappers (no state)
+            ├── queryClient.ts     # Singleton QueryClient (staleTime, gcTime, retries)
+            └── utils.ts           # formatCurrency, CHART_COLORS
 ```
+
+### Data-Fetching Architecture (React Query)
+
+All server state is managed by **TanStack Query v5** via custom hooks in `src/hooks/`:
+
+| Hook | Query Key | What it fetches |
+| :--- | :--- | :--- |
+| `useDashboard(currency)` | `['analytics','dashboard', currency]` | summary + top-8 depts + top-5 earners in one `Promise.all` |
+| `useFullAnalytics(currency)` | `['analytics', currency]` | summary + depts + countries + distribution + top-10 earners |
+| `useAnalyticsSummary(currency)` | `['analytics','summary', currency]` | summary only (composable / prefetch) |
+| `useAnalyticsByDepartment(currency)` | `['analytics','byDepartment', currency]` | department averages |
+| `useAnalyticsByCountry(currency)` | `['analytics','byCountry', currency]` | country averages |
+| `useAnalyticsDistribution(currency, buckets)` | `['analytics','distribution', currency, buckets]` | salary histogram |
+| `useTopEarners(currency, limit)` | `['analytics','topEarners', currency, limit]` | top earner list |
+
+**Key behaviours:**
+- **No `useEffect`** in page components — zero cascading render warnings.
+- **2-minute `staleTime`** — instant cache hits when switching between Dashboard and Analytics.
+- **`isFetching`** drives the refresh spinner for background refetch UX.
+- **`refetch()`** replaces manual retry counters — single source of truth.
+- **`Promise.all`** inside `queryFn` means all data lands atomically (no intermediate loading flicker between fields).
 
 ---
 

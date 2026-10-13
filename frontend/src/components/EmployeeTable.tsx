@@ -23,6 +23,7 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({ department: '', country: '', employment_type: '', currency: '' });
   const [showFilters, setShowFilters] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -84,11 +85,18 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
     setParams(p => ({ ...p, page: 1 }));
   };
 
-  const handleExport = () => {
-    const activeFilters: Record<string, string> = {};
-    if (search) activeFilters.search = search;
-    Object.entries(filters).forEach(([k, v]) => { if (v) activeFilters[k] = v; });
-    exportApi.csv(activeFilters);
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const activeFilters: Record<string, string> = {};
+      if (search) activeFilters.search = search;
+      Object.entries(filters).forEach(([k, v]) => { if (v) activeFilters[k] = v; });
+      await exportApi.csv(activeFilters);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const cols = [
@@ -127,9 +135,13 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
           className={`p-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors cursor-pointer ${loading ? 'animate-spin' : ''}`}>
           <RefreshCw size={16} />
         </button>
-        <button onClick={handleExport}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-green-400 hover:border-green-500/50 rounded-lg text-sm transition-colors cursor-pointer">
-          <Download size={16} /> Export CSV
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-green-400 hover:border-green-500/50 disabled:opacity-50 rounded-lg text-sm transition-colors cursor-pointer"
+        >
+          <Download size={16} className={exporting ? 'animate-bounce text-green-400' : ''} />
+          {exporting ? 'Exporting...' : 'Export CSV'}
         </button>
       </div>
 

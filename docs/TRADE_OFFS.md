@@ -46,3 +46,12 @@ This document outlines the key technical and product trade-offs evaluated during
 | :--- | :--- | :--- | :--- |
 | **Server-Side Pagination & Filtering** | • Payload size per request is minimal (`< 25KB`).<br>• Initial page load is instantaneous.<br>• Scales gracefully to 100,000+ employees. | • Filter changes require a lightweight API roundtrip (`< 15ms`). | **Selected.** Downloading 10,000 employee records to the browser client would consume megabytes of RAM and slow initial mobile/desktop load times. Server pagination is standard enterprise practice. |
 | **Download All 10,000 Rows to Client** | • Instant zero-latency client sorting and filtering once loaded. | • 5MB–10MB initial payload download, blocking mobile browsers and causing severe UI thread pauses. | **Rejected.** Poor user experience and does not scale. |
+
+---
+
+## 6. Frontend Server-State Management: TanStack Query vs Manual `useEffect`
+
+| Option | Pros | Cons | Decision & Rationale |
+| :--- | :--- | :--- | :--- |
+| **TanStack Query v5 (`useQuery`)** | • Fetches run outside the React render-commit cycle — zero cascading render warnings.<br>• Automatic 2-minute `staleTime` cache: instant navigation between Dashboard and Analytics.<br>• Built-in request deduplication, background refetch, and `isFetching` flag.<br>• `refetch()` replaces manual `retryCount` state.<br>• Race conditions handled internally (no `ignore` flag needed in pages). | • Adds `@tanstack/react-query` as a dependency.<br>• Requires a `QueryProvider` wrapper in the layout. | **Selected.** For a multi-page app where the same currency-keyed analytics data is consumed by both Dashboard and Analytics pages, a shared query cache with deduplication provides significant UX and maintainability gains. |
+| **Manual `useEffect` + `useState`** | • Zero additional dependencies.<br>• Familiar to all React developers. | • Synchronous `setState` inside `useEffect` triggers React 19 cascading render warnings.<br>• No caching — re-fetches identically keyed data on every mount.<br>• Manual race condition handling with `ignore = true` cleanup.<br>• Manual retry counter state required for refresh UX. | **Replaced.** The manual approach requires boilerplate and workarounds to solve problems that React Query solves by design. |

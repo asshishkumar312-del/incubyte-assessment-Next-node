@@ -85,10 +85,40 @@ export const analyticsApi = {
 
 // Export
 export const exportApi = {
-  csv: (params: Record<string, string>) => {
-    const token = localStorage.getItem('ems_token');
-    const searchParams = new URLSearchParams(params);
-    window.open(`${API_BASE}/api/export/csv?${searchParams}`, '_blank');
+  csv: async (params: Record<string, string> = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('ems_token') : null;
+    const cleanParams: Record<string, string> = {};
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') cleanParams[k] = String(v);
+    });
+    if (token) cleanParams.token = token;
+    const searchParams = new URLSearchParams(cleanParams);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/export/csv?${searchParams}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: 'Export failed' }));
+        throw new Error(err.message || 'Export failed');
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ems-employees-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch {
+      // Fallback: direct window navigation with token query param
+      window.open(`${API_BASE}/api/export/csv?${searchParams}`, '_blank');
+    }
   },
 };
 

@@ -61,13 +61,22 @@ seedEmployees(tenThousandRecords); // Commits in a single atomic I/O flush
 
 ---
 
-## 4. Frontend Performance & React 19 Optimization
+## 4. Frontend Performance & React Query Optimizations
 
-1. **Elimination of Cascading Renders:**
-   - As audited in [EmployeeTable.tsx](file:///d:/incubyte/frontend/src/components/EmployeeTable.tsx), initial state is declared with `loading = true`, and asynchronous data updates happen purely in `.then()` continuations. This prevents synchronous re-renders during the effect execution phase.
-2. **Race Condition Prevention:**
-   - Uses an `ignore` flag cleanup function on `useEffect` to abort stale state application when users rapidly type search terms or flip pagination.
-3. **Optimized Payloads:**
-   - Server-side pagination limits responses to 20 records (`~8KB JSON payload`), ensuring instantaneous DOM rendering and low mobile memory consumption.
-4. **Debounced Search:**
-   - Client search inputs trigger page resets without hammering the backend on every individual keystroke.
+1. **Zero Cascading Renders (TanStack Query):**
+   - All server state in `/dashboard` and `/analytics` is fetched via **React Query's `useQuery`** hook inside typed custom hooks (`src/hooks/useAnalytics.ts`). Unlike `useEffect`, `useQuery` schedules fetches *outside* the render-commit cycle — eliminating the React 19 compiler warning about synchronous `setState` inside effects entirely.
+
+2. **2-Minute Intelligent Cache (`staleTime`):**
+   - The singleton `QueryClient` (`src/lib/queryClient.ts`) marks responses fresh for **2 minutes**. Navigating between the Dashboard and Analytics pages within that window delivers instant cached results with zero network round-trips.
+
+3. **Atomic Data Commits (no intermediate flicker):**
+   - Both `useDashboard` and `useFullAnalytics` use `Promise.all` inside a single `queryFn`. All fields (`summary`, `deptData`, `topEarners`, etc.) commit atomically in one re-render — preventing the partial-loading flicker seen when multiple `useState` hooks resolve independently.
+
+4. **Race Condition Safety (built-in):**
+   - React Query internally cancels stale in-flight requests when query keys change (e.g. currency switches from `USD` → `EUR`). The previous manual `ignore = true` cleanup flag is no longer needed in page components.
+
+5. **`useMemo`-Derived Chart Data:**
+   - `genderData` and `employmentData` are computed with `useMemo` inside the hook, keyed to `query.data`. They only recompute when the API response changes — not on unrelated state updates (e.g., spinner visibility).
+
+6. **Debounced Search (EmployeeTable):**
+   - Client search inputs trigger page resets without hammering the backend on every individual keystroke. Server-side pagination limits responses to 20 records (`~8KB JSON payload`), ensuring instantaneous DOM rendering.

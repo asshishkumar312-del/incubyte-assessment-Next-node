@@ -54,8 +54,8 @@ In accordance with Incubyte's assessment guidelines, this project was developed 
 > *"The React 19 compiler flagged an error in EmployeeTable: 'Error: Calling setState synchronously within an effect can trigger cascading renders'. Explain the root cause and refactor the component to follow modern React best practices."*
 >
 > **Human Review & Refinement:**
-> - Identified that calling `fetchEmployees` (which started with `setLoading(true)`) synchronously inside `useEffect` forced an immediate re-render after commit.
-> - Fixed by initializing state with `loading = true`, moving data fetching directly into `useEffect` with an `ignore` cleanup flag, and isolating manual refreshes to user event handlers.
+> - Identified that calling `setLoading(true)` synchronously inside `useEffect` forced an immediate re-render after commit.
+> - Fixed by initialising state with `loading = true`, moving data fetching directly into `useEffect` with an `ignore` cleanup flag, and isolating manual refreshes to user event handlers.
 > - When the user flagged that `"Full-time"` badge wrapped across hyphens, added `whitespace-nowrap inline-block` and pointer cursor utilities across table actions.
 
 ---
@@ -70,8 +70,24 @@ In accordance with Incubyte's assessment guidelines, this project was developed 
 
 ---
 
+### Phase 6: React Query Migration & Hook Architecture
+> **Prompt & Context:**
+> *"The dashboard and analytics pages still use manual useEffect + setState for data fetching. Refactor to use React Query with a proper hooks structure — useDashboard, useFullAnalytics — and update all documentation."*
+>
+> **Human Review & Refinement:**
+> - Installed `@tanstack/react-query` v5.
+> - Created `src/lib/queryClient.ts`: a singleton `QueryClient` with `staleTime: 2min`, `gcTime: 10min`, `retry: 1`.
+> - Created `src/components/QueryProvider.tsx`: a client-side boundary wrapper for Next.js App Router.
+> - Created `src/hooks/useAnalytics.ts`: a typed hook layer with a **query key factory** (`analyticsKeys`) and composite hooks (`useDashboard`, `useFullAnalytics`) that `Promise.all` their sub-requests and expose `useMemo`-memoized derived chart data.
+> - Rewrote `dashboard/page.tsx` and `analytics/page.tsx`: all `useEffect`/`useState` data logic removed; pages now destructure `{ data, isLoading, isFetching, isError, error, refetch }` from hooks.
+> - `refetch()` replaces the manual `retryCount` increment pattern. `isFetching` drives the spinner during background refetches.
+> - Updated `ARCHITECTURE.md`, `PERFORMANCE.md`, `TRADE_OFFS.md`, and `README.md` to reflect the new architecture.
+
+---
+
 ## 3. Key Takeaways & AI Engineering Craftsmanship
 
 - **Prompt Specificity Yields Better Architecture:** Giving the model clear constraints (such as append-only ledger pattern and sub-10ms latency targets) produced production-grade code on the first attempt.
 - **Verification Over Blind Trust:** Static analysis, linting, and automated test runners were used to validate all generated code.
+- **Iterative Refinement:** The data-fetching layer evolved from raw `useEffect` → derived atomic state → TanStack Query, each iteration prompted by identifying the limitations of the previous approach.
 - **Speed to Quality:** The combination of AI scaffolding and human engineering judgment delivered a full-stack, tested system with 10,000 seeded employees and real-time analytics in a single day.

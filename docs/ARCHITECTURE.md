@@ -33,7 +33,9 @@ graph TD
    - **Framework:** Next.js 16 (React 19, TypeScript).
    - **Design System:** Tailwind CSS with custom glassmorphism and modern dark theme.
    - **Data Visualization:** Recharts for departmental analytics, salary distribution histograms, and equity graphs.
-   - **State & Context:** React Context (`AuthContext`) for session management, reactive hooks for server state synchronization.
+   - **Authentication State:** React Context (`AuthContext`) for JWT session persistence and route protection.
+   - **Server State:** **TanStack Query v5 (React Query)** — all API data lives in typed custom hooks (`src/hooks/useAnalytics.ts`). A singleton `QueryClient` (`src/lib/queryClient.ts`) provides a 2-minute `staleTime` cache, automatic request deduplication, background refetch, and a single `refetch()` API.
+   - **Hook Layer (`src/hooks/`):** Encapsulates query keys, parallel `Promise.all` fetching, and `useMemo`-derived chart data. Pages contain zero `useEffect` data-fetching logic.
 
 2. **API & Business Logic Layer (Backend):**
    - **Framework:** Express 5 on Node.js.
