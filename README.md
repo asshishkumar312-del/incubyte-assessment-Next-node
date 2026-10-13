@@ -6,6 +6,20 @@
 
 ---
 
+## 🌐 Live Production Application & Video Walkthroughs
+
+| Resource | Description & Link |
+| :--- | :--- |
+| 🚀 **Production Application** | [**incubyte-assessment-next-node.vercel.app**](https://incubyte-assessment-next-node.vercel.app) |
+| 🎥 **Walkthrough Video (Part 1)** | [**Watch on Loom (Overview & Architecture)**](https://www.loom.com/share/2c7ed7e1b8d14383aff855ec94cdd5ac) |
+| 🎥 **Walkthrough Video (Part 2)** | [**Watch on Loom (Feature Deep Dive & Workflows)**](https://www.loom.com/share/18f1ba217bc341eab2bbd6a336be89e6) |
+
+> 🔑 **Demo HR Manager Credentials:**  
+> **Username:** `admin`  
+> **Password:** `Admin@123`
+
+---
+
 ## 📑 Assessment Artifacts & Documentation
 
 As requested by the assessment guidelines, the following documents detail the architectural thinking, product decisions, and AI-driven development workflows:
@@ -116,7 +130,8 @@ npm run dev           # Starts Next.js app on http://localhost:3000
 ```
 
 ### 3. HR Manager Credentials
-- **URL:** [http://localhost:3000](http://localhost:3000)
+- **Production URL:** [https://incubyte-assessment-next-node.vercel.app](https://incubyte-assessment-next-node.vercel.app)
+- **Local URL:** [http://localhost:3000](http://localhost:3000)
 - **Username:** `admin`
 - **Password:** `Admin@123`
 
