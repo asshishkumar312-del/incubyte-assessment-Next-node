@@ -13,3 +13,7 @@ frontend/.env.local
 .DS_Store
 Thumbs.db
 *.db
+*.db-shm
+*.db-wal
+backend/database/ems*
+
