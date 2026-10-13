@@ -89,7 +89,7 @@ export default function DashboardPage() {
                   <YAxis type="category" dataKey="department" tick={{ fill: '#9ca3af', fontSize: 11 }} width={95} />
                   <Tooltip
                     contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: '8px', color: '#fff' }}
-                    formatter={(v: number) => [formatCurrency(v, currency), 'Avg Salary']}
+                    formatter={(v: any) => [formatCurrency(Number(v) || 0, currency), 'Avg Salary']}
                   />
                   <Bar dataKey="avg_salary" radius={[0, 4, 4, 0]}>
                     {deptData.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
