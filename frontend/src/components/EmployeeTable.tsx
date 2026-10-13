@@ -113,8 +113,8 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
-      <div className="flex gap-3 mb-4 flex-wrap">
-        <form onSubmit={handleSearch} className="flex-1 min-w-64 relative">
+      <div className="flex gap-2.5 mb-4 flex-wrap items-center">
+        <form onSubmit={handleSearch} className="w-full sm:flex-1 sm:min-w-60 relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
             value={search}
@@ -123,26 +123,29 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
               setParams(p => ({ ...p, page: 1 }));
             }}
             placeholder="Search by name, email, or ID..."
-            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg pl-9 pr-4 py-2.5 text-sm focus:border-violet-500 focus:outline-none transition-colors placeholder:text-gray-600"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-xl pl-9 pr-4 py-2.5 text-sm focus:border-violet-500 focus:outline-none transition-colors placeholder:text-gray-600"
           />
         </form>
-        <button onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm transition-colors cursor-pointer ${showFilters ? 'bg-violet-600/20 border-violet-500/50 text-violet-400' : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'}`}>
-          <Filter size={16} /> Filters
-          {Object.values(filters).some(Boolean) && <span className="w-2 h-2 bg-violet-500 rounded-full"></span>}
-        </button>
-        <button onClick={handleRefresh}
-          className={`p-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors cursor-pointer ${loading ? 'animate-spin' : ''}`}>
-          <RefreshCw size={16} />
-        </button>
-        <button
-          onClick={handleExport}
-          disabled={exporting}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-green-400 hover:border-green-500/50 disabled:opacity-50 rounded-lg text-sm transition-colors cursor-pointer"
-        >
-          <Download size={16} className={exporting ? 'animate-bounce text-green-400' : ''} />
-          {exporting ? 'Exporting...' : 'Export CSV'}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+          <button onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm transition-colors cursor-pointer ${showFilters ? 'bg-violet-600/20 border-violet-500/50 text-violet-400' : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'}`}>
+            <Filter size={15} /> Filters
+            {Object.values(filters).some(Boolean) && <span className="w-2 h-2 bg-violet-500 rounded-full"></span>}
+          </button>
+          <button onClick={handleRefresh}
+            title="Refresh"
+            className={`p-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-white rounded-xl transition-colors cursor-pointer ${loading ? 'animate-spin' : ''}`}>
+            <RefreshCw size={15} />
+          </button>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center gap-2 px-3.5 py-2.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-green-400 hover:border-green-500/50 disabled:opacity-50 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer ml-auto sm:ml-0"
+          >
+            <Download size={15} className={exporting ? 'animate-bounce text-green-400' : ''} />
+            {exporting ? 'Exporting...' : 'Export CSV'}
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -181,8 +184,8 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto rounded-xl border border-gray-800">
-        <table className="w-full text-sm">
+      <div className="flex-1 overflow-x-auto rounded-xl border border-gray-800">
+        <table className="w-full text-sm min-w-[840px]">
           <thead className="bg-gray-800/80 sticky top-0 z-10">
             <tr>
               {cols.map(col => (
@@ -244,7 +247,7 @@ export default function EmployeeTable({ meta, onView, onEdit, onSalaryUpdate, on
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between mt-4 text-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 text-xs sm:text-sm">
         <div className="flex items-center gap-2">
           <span className="text-gray-500">Rows per page:</span>
           <select value={params.limit} onChange={e => setParams(p => ({ ...p, limit: Number(e.target.value), page: 1 }))}
