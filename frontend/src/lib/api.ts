@@ -1,5 +1,17 @@
-// src/lib/api.ts
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const getApiBase = (): string => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (
+    process.env.NODE_ENV === 'production' ||
+    (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+  ) {
+    return 'https://incubyte-assessment-next-node.onrender.com';
+  }
+  return 'http://localhost:5000';
+};
+
+const API_BASE = getApiBase();
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
