@@ -61,12 +61,12 @@ export default function AnalyticsPage() {
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-white">Salary Analytics</h2>
-            <p className="text-gray-400 text-sm mt-1">Deep insights into compensation patterns across the organization</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Salary Analytics</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-0.5">Deep insights into compensation patterns across the organization</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => refetch()}
               title="Refresh Data"
@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
             <select
               value={currency}
               onChange={e => setCurrency(e.target.value)}
-              className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+              className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-violet-500 focus:outline-none"
             >
               {CURRENCIES.map(c => <option key={c}>{c}</option>)}
             </select>
@@ -101,19 +101,19 @@ export default function AnalyticsPage() {
         )}
 
         {/* KPI Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           {[
             { label: 'Total Headcount',       value: summary?.total_employees?.toLocaleString(),                      icon: Users,      sub: 'Active employees',   color: 'violet' },
             { label: 'Annual Payroll',         value: summary ? formatCurrency(summary.total_payroll * 12, currency) : '—', icon: DollarSign, sub: 'Projected annual',  color: 'emerald' },
             { label: 'Avg Compensation',       value: summary ? formatCurrency(summary.avg_salary, currency) : '—',   icon: TrendingUp, sub: 'Organization mean',   color: 'blue' },
             { label: 'Median Compensation',    value: summary ? formatCurrency(summary.median_salary, currency) : '—',icon: Activity,   sub: '50th percentile',    color: 'amber' },
           ].map(({ label, value, icon: Icon, sub, color }) => (
-            <div key={label} className="p-5 bg-gray-900 rounded-2xl border border-gray-800 hover:border-gray-700 transition-all">
-              <div className={`w-10 h-10 rounded-xl bg-${color}-500/10 border border-${color}-500/20 flex items-center justify-center mb-4`}>
+            <div key={label} className="p-4 sm:p-5 bg-gray-900 rounded-2xl border border-gray-800 hover:border-gray-700 transition-all">
+              <div className={`w-10 h-10 rounded-xl bg-${color}-500/10 border border-${color}-500/20 flex items-center justify-center mb-3 sm:mb-4`}>
                 <Icon size={18} className={`text-${color}-400`} />
               </div>
-              <p className="text-2xl font-bold text-white">{isLoading ? '...' : (value || '—')}</p>
-              <p className="text-gray-500 text-xs mt-1">{label}</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">{isLoading ? '...' : (value || '—')}</p>
+              <p className="text-gray-400 text-xs font-medium mt-1">{label}</p>
               <p className="text-gray-600 text-xs">{sub}</p>
             </div>
           ))}

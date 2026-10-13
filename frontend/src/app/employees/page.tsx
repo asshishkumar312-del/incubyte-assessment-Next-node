@@ -87,13 +87,13 @@ export default function EmployeesPage() {
 
       <div className="max-w-full mx-auto h-full flex flex-col gap-4">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
           <div>
-            <h2 className="text-2xl font-bold text-white">Employee Directory</h2>
-            <p className="text-gray-400 text-sm mt-1">Search, filter, and manage all employees</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Employee Directory</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-0.5">Search, filter, and manage all employees</p>
           </div>
           <button onClick={() => openModal('create')}
-            className="flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-violet-500/20">
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-medium transition-colors shadow-lg shadow-violet-500/20 cursor-pointer self-start sm:self-auto">
             <Plus size={18} /> Add Employee
           </button>
         </div>

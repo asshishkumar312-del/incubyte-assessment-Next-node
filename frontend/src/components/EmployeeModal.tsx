@@ -73,20 +73,20 @@ export default function EmployeeModal({ meta, onClose, onSuccess }: Props) {
 
           {step === 1 && (
             <>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <Field label="First Name" required value={form.first_name} onChange={v => set('first_name', v)} placeholder="John" />
                 <Field label="Last Name" required value={form.last_name} onChange={v => set('last_name', v)} placeholder="Doe" />
               </div>
               <Field label="Email Address" required type="email" value={form.email} onChange={v => set('email', v)} placeholder="john.doe@acme.com" />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <SelectField label="Department" required value={form.department} onChange={v => set('department', v)} options={meta.departments} placeholder="Select Department" />
                 <Field label="Job Title" required value={form.job_title} onChange={v => set('job_title', v)} placeholder="Software Engineer" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <SelectField label="Country" required value={form.country} onChange={v => set('country', v)} options={meta.countries} placeholder="Select Country" />
                 <SelectField label="Employment Type" required value={form.employment_type} onChange={v => set('employment_type', v)} options={EMPLOYMENT_TYPES} placeholder="Select Type" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <SelectField label="Gender" value={form.gender || ''} onChange={v => set('gender', v)} options={GENDERS} placeholder="Select Gender" />
                 <Field label="Hire Date" required type="date" value={form.hire_date} onChange={v => set('hire_date', v)} />
               </div>
@@ -100,7 +100,7 @@ export default function EmployeeModal({ meta, onClose, onSuccess }: Props) {
                   <DollarSign size={18} className="text-violet-400" />
                   <span className="text-white font-medium">Initial Salary Information</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                   <div>
                     <label className="block text-gray-400 text-sm mb-1.5">Salary Amount *</label>
                     <input
@@ -116,7 +116,7 @@ export default function EmployeeModal({ meta, onClose, onSuccess }: Props) {
               </div>
               <div className="p-4 bg-gray-800/30 rounded-xl border border-gray-700">
                 <h3 className="text-gray-400 text-sm mb-3 font-medium">Summary</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                   {[
                     ['Name', `${form.first_name} ${form.last_name}`],
                     ['Email', form.email],

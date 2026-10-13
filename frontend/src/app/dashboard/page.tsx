@@ -37,12 +37,12 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-white">Overview Dashboard</h2>
-            <p className="text-gray-400 text-sm mt-1">Real-time compensation insights across all employees</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Overview Dashboard</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-0.5">Real-time compensation insights across all employees</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => refetch()}
               title="Refresh Data"
@@ -53,13 +53,13 @@ export default function DashboardPage() {
             <select
               value={currency}
               onChange={e => setCurrency(e.target.value)}
-              className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+              className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-violet-500 focus:outline-none"
             >
               {CURRENCIES.map(c => <option key={c}>{c}</option>)}
             </select>
             <Link
               href="/analytics"
-              className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-sm font-medium transition-colors"
+              className="px-3.5 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
             >
               Full Analytics →
             </Link>
@@ -83,22 +83,22 @@ export default function DashboardPage() {
         )}
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           {[
             { label: 'Total Employees', value: summary?.total_employees?.toLocaleString() ?? '—', icon: Users,      color: 'violet',  desc: 'Active employees' },
             { label: 'Total Payroll',   value: summary ? formatCurrency(summary.total_payroll, currency) : '—',     icon: DollarSign, color: 'emerald', desc: `Monthly (${currency})` },
             { label: 'Avg Salary',      value: summary ? formatCurrency(summary.avg_salary, currency)    : '—',     icon: TrendingUp, color: 'blue',    desc: 'Organization average' },
             { label: 'Median Salary',   value: summary ? formatCurrency(summary.median_salary, currency) : '—',     icon: Activity,   color: 'orange',  desc: 'Distribution midpoint' },
           ].map(({ label, value, icon: Icon, color, desc }) => (
-            <div key={label} className="p-5 bg-gray-900 rounded-2xl border border-gray-800 hover:border-gray-700 transition-all group">
-              <div className="flex items-start justify-between mb-4">
+            <div key={label} className="p-4 sm:p-5 bg-gray-900 rounded-2xl border border-gray-800 hover:border-gray-700 transition-all group">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
                 <div className={`w-10 h-10 rounded-xl bg-${color}-500/10 border border-${color}-500/20 flex items-center justify-center`}>
                   <Icon size={18} className={`text-${color}-400`} />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-white mb-1">{isLoading ? '...' : value}</p>
-              <p className="text-gray-500 text-xs">{label}</p>
-              <p className="text-gray-600 text-xs mt-1">{desc}</p>
+              <p className="text-xl sm:text-2xl font-bold text-white mb-1">{isLoading ? '...' : value}</p>
+              <p className="text-gray-400 text-xs font-medium">{label}</p>
+              <p className="text-gray-600 text-xs mt-0.5">{desc}</p>
             </div>
           ))}
         </div>
